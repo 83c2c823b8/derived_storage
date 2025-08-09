@@ -1,0 +1,163 @@
+\RequirePackage{luatex85}
+\documentclass[leqno]{ltjsarticle}
+\usepackage{luatexja-fontspec}
+\usepackage[top=10truemm,bottom=10truemm,left=20truemm,right=20truemm]{geometry}
+\usepackage{luatexja} 
+\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,mystyle,tikz-cd}
+\usetikzlibrary{arrows.meta}
+\titleformat*{\section}{\Large\bfseries}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+\usepackage{listings}
+\usepackage{xcolor}
+\DeclareMathOperator{\Ran}{Ran}
+\everymath{\displaystyle}
+\usepackage{tikz-3dplot}
+\makeatletter
+
+% from https://tex.stackexchange.com/a/375604/121799
+%along x axis
+\define@key{x sphericalkeys}{radius}{\def\myradius{#1}}
+\define@key{x sphericalkeys}{theta}{\def\mytheta{#1}}
+\define@key{x sphericalkeys}{phi}{\def\myphi{#1}}
+\tikzdeclarecoordinatesystem{x spherical}{% 
+    \setkeys{x sphericalkeys}{#1}%
+    \pgfpointxyz{\myradius*cos(\mytheta)}{\myradius*sin(\mytheta)*cos(\myphi)}{\myradius*sin(\mytheta)*sin(\myphi)}}
+
+%along y axis
+\define@key{y sphericalkeys}{radius}{\def\myradius{#1}}
+\define@key{y sphericalkeys}{theta}{\def\mytheta{#1}}
+\define@key{y sphericalkeys}{phi}{\def\myphi{#1}}
+\tikzdeclarecoordinatesystem{y spherical}{% 
+    \setkeys{y sphericalkeys}{#1}%
+    \pgfpointxyz{\myradius*sin(\mytheta)*cos(\myphi)}{\myradius*cos(\mytheta)}{\myradius*sin(\mytheta)*sin(\myphi)}}
+
+
+%along z axis
+\define@key{z sphericalkeys}{radius}{\def\myradius{#1}}
+\define@key{z sphericalkeys}{theta}{\def\mytheta{#1}}
+\define@key{z sphericalkeys}{phi}{\def\myphi{#1}}
+\tikzdeclarecoordinatesystem{z spherical}{% 
+    \setkeys{z sphericalkeys}{#1}%
+    \pgfmathsetmacro{\Xtest}{sin(\tdplotmaintheta)*cos(\tdplotmainphi-90)*sin(\mytheta)*cos(\myphi)
+    +sin(\tdplotmaintheta)*sin(\tdplotmainphi-90)*sin(\mytheta)*sin(\myphi)
+    +cos(\tdplotmaintheta)*cos(\mytheta)}
+    % \Xtest is the projection of the coordinate on the normal vector of the visible plane
+    \pgfmathsetmacro{\ntest}{ifthenelse(\Xtest<0,0,1)}
+    \ifnum\ntest=0
+    \xdef\MCheatOpa{0.3}
+    \else
+    \xdef\MCheatOpa{1}
+    \fi
+    %\typeout{\mytheta,\tdplotmaintheta;\myphi,\tdplotmainphi:\ntest}
+    \pgfpointxyz{\myradius*sin(\mytheta)*cos(\myphi)}{\myradius*sin(\mytheta)*sin(\myphi)}{\myradius*cos(\mytheta)}}
+
+%%%%%%%%%%%%%%%%%
+
+\pgfdeclareplothandler{\pgfplothandlercurveto}{}{%
+  point macro=\pgf@plot@curveto@handler@initial,
+  jump macro=\pgf@plot@smooth@next@moveto,
+  end macro=\pgf@plot@curveto@handler@finish
+}
+
+\def\pgf@plot@smooth@next@moveto{%
+  \pgf@plot@curveto@handler@finish%
+  \global\pgf@plot@startedfalse%
+  \global\let\pgf@plotstreampoint\pgf@plot@curveto@handler@initial%
+}
+
+\def\pgf@plot@curveto@handler@initial#1{%
+  \pgf@process{#1}%
+  \pgf@xa=\pgf@x%
+  \pgf@ya=\pgf@y%
+  \pgf@plot@first@action{\pgfqpoint{\pgf@xa}{\pgf@ya}}%
+  \xdef\pgf@plot@curveto@first{\noexpand\pgfqpoint{\the\pgf@xa}{\the\pgf@ya}}%
+  \global\let\pgf@plot@curveto@first@support=\pgf@plot@curveto@first%
+  \global\let\pgf@plotstreampoint=\pgf@plot@curveto@handler@second%
+}
+
+\def\pgf@plot@curveto@handler@second#1{%
+  \pgf@process{#1}%
+  \xdef\pgf@plot@curveto@second{\noexpand\pgfqpoint{\the\pgf@x}{\the\pgf@y}}%
+  \global\let\pgf@plotstreampoint=\pgf@plot@curveto@handler@third%
+  \global\pgf@plot@startedtrue%
+}
+
+\def\pgf@plot@curveto@handler@third#1{%
+  \pgf@process{#1}%
+  \xdef\pgf@plot@curveto@current{\noexpand\pgfqpoint{\the\pgf@x}{\the\pgf@y}}%
+  % compute difference vector:
+  \pgf@xa=\pgf@x%
+  \pgf@ya=\pgf@y%
+  \pgf@process{\pgf@plot@curveto@first}
+  \advance\pgf@xa by-\pgf@x%
+  \advance\pgf@ya by-\pgf@y%
+  % compute support directions:
+  \pgf@xa=\pgf@plottension\pgf@xa%
+  \pgf@ya=\pgf@plottension\pgf@ya%
+  % first marshal:
+  \pgf@process{\pgf@plot@curveto@second}%
+  \pgf@xb=\pgf@x%
+  \pgf@yb=\pgf@y%
+  \pgf@xc=\pgf@x%
+  \pgf@yc=\pgf@y%
+  \advance\pgf@xb by-\pgf@xa%
+  \advance\pgf@yb by-\pgf@ya%
+  \advance\pgf@xc by\pgf@xa%
+  \advance\pgf@yc by\pgf@ya%
+  \@ifundefined{MCheatOpa}{}{%
+  \pgf@plotstreamspecial{\pgfsetstrokeopacity{\MCheatOpa}}}
+  \edef\pgf@marshal{\noexpand\pgfsetstrokeopacity{\noexpand\MCheatOpa}
+  \noexpand\pgfpathcurveto{\noexpand\pgf@plot@curveto@first@support}%
+    {\noexpand\pgfqpoint{\the\pgf@xb}{\the\pgf@yb}}{\noexpand\pgf@plot@curveto@second}
+    \noexpand\pgfusepathqstroke
+    \noexpand\pgfpathmoveto{\noexpand\pgf@plot@curveto@second}}%
+  {\pgf@marshal}%
+  %\pgfusepathqstroke%
+  % Prepare next:
+  \global\let\pgf@plot@curveto@first=\pgf@plot@curveto@second%
+  \global\let\pgf@plot@curveto@second=\pgf@plot@curveto@current%
+  \xdef\pgf@plot@curveto@first@support{\noexpand\pgfqpoint{\the\pgf@xc}{\the\pgf@yc}}%
+}
+
+\def\pgf@plot@curveto@handler@finish{%
+  \ifpgf@plot@started%
+    \pgfpathcurveto{\pgf@plot@curveto@first@support}{\pgf@plot@curveto@second}{\pgf@plot@curveto@second}%
+  \fi%
+}
+
+
+\makeatother
+\begin{document}
+\pgfmathsetmacro{\RadiusSphere}{3}
+
+\begin{center}
+\tdplotsetmaincoords{70}{100}
+\begin{tikzpicture}[tdplot_main_coords]
+  \coordinate (O) at (0,0,0);
+ % S^2
+ \draw[tdplot_screen_coords,ball color=gray,fill opacity=0.3] (0,0,0) circle (3);
+ \path (xyz spherical cs:radius=\RadiusSphere,latitude=90,longitude=00)
+  node[fill,circle,inner sep=2pt]{}; 
+ % the English word for tetraeder is tetrahedron ;-)
+ \foreach \X in {0,1,2} 
+ {\draw plot[variable=\t,domain=0:0-109.5,smooth] 
+  (z spherical cs:radius=\RadiusSphere,theta=\t,phi=\X*120) 
+  \ifnum\X=0
+  node[fill,circle,inner sep=2pt,opacity=0.3]{}
+  \else
+  node[fill,circle,inner sep=2pt,opacity=1]{}
+  \fi;}
+ \draw plot[variable=\t,domain=0:360,smooth,samples=121] 
+ (z spherical cs:radius=\RadiusSphere,theta={-109.5-14*abs(sin(1.5*\t))},phi=\t);
+	\coordinate (P1) at (z spherical cs:radius=\RadiusSphere,theta=70.58,phi=0);
+	\node[fill=red,circle,inner sep=1.5pt, opacity = 1] at (P1) {};
+	\coordinate (P2) at (z spherical cs:radius=\RadiusSphere,theta=70.58,phi=120);
+	\node[fill=red,circle,inner sep=1.5pt, opacity = 0.3] at (P2) {};
+	\coordinate (P3) at (z spherical cs:radius=\RadiusSphere,theta=70.58,phi=240);
+	\node[fill=red,circle,inner sep=1.5pt, opacity = 0.3] at (P3) {};
+	\coordinate (P4) at (z spherical cs:radius=\RadiusSphere,theta=180,phi=0);
+	\node[fill=red,circle,inner sep=1.5pt, opacity = 0.3] at (P4) {};
+\end{tikzpicture}
+\end{center}
+\end{document}
