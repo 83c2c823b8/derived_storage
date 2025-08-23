@@ -1,0 +1,34 @@
+\RequirePackage{luatex85}
+\documentclass[leqno]{ltjsarticle}
+\usepackage{luatexja-fontspec}
+\usepackage[top=10truemm,bottom=10truemm,left=20truemm,right=20truemm]{geometry}
+\usepackage{luatexja} 
+\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,mystyle,tikz-cd}
+\usetikzlibrary{arrows.meta}
+\titleformat*{\section}{\Large\bfseries}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+%\everymath{\displaystyle}
+\begin{document}
+\begin{thm}
+	There exists the following functorial isomorphism
+	\[\alpha_{X,Y}\colon\Hom_{\mod k}(X,Y) \simeq \Hom_{\mod k}(Y,X)^\vee .\]
+	namely, Serre functor is identity in $\mod k$.
+\end{thm}
+\begin{proof}
+		\[
+			\begin{array}{ccccc}
+				\colon\Hom_{\mod k}(Y,X)\times\Hom_{\mod k}(X,Y)   &\longrightarrow & k\\
+				\rotatebox{90}{\in}& &\rotatebox{90}{\in}\\
+				(g, f) & \longmapsto & \tr(g \circ f)& .
+					\end{array}
+\]
+First we prove this mapping defines perfect bilinear forms. Let $a_1, a_2\in k$.
+\begin{align*}
+	\tr((a_1g_1 + a_2g_2)\circ f) = \tr (a_1g_1\circ f + g_2\circ f) = a_1\tr(g_1\circ f) + a_2\tr(g_2\circ f)\\
+	\tr(g\circ (a_1f_1 + a_2f_2))= \tr (a_1g\circ f_1 + a_2g\circ f_2) = a_1\tr(g\circ f_1) + a_2\tr(g\circ f_2)
+\end{align*}
+Next, we prove nondegeneracy. Let $f\neq 0\colon X\to Y$. Choose $x\in X$ with $f(x)\neq 0$ and pick $\varphi\in Y^\vee$ with $\varphi(f(x))\neq 0$.Define $g\colon Y\to X$ by
+\[g(y) = \varphi(y)x.\]
+\end{proof}
+\end{document}
