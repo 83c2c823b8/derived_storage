@@ -1,0 +1,49 @@
+\RequirePackage{luatex85}
+\documentclass[leqno]{article}
+\usepackage{luatexja-fontspec}
+\usepackage[top=10truemm,bottom=10truemm,left=20truemm,right=20truemm]{geometry}
+\usepackage{luatexja} 
+\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,tikz-cd,csvsimple}
+\usetikzlibrary{arrows.meta}
+\titleformat*{\section}{\Large\bfseries}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+%\everymath{\displaystyle}
+%{\textbf{\Large{}}}\hspace{\fill} {\texttt{\Large{24A25030}}}{\Large{Yudai Yamamoto}}\\
+\begin{document}
+
+\section{English words}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|p{5cm}|p{10cm}|}
+    \hline
+     \textbf{English words} & \textbf{Meaning} \\
+    \hline\hline
+    \csvreader[
+      late after line=\\\hline, % add line after each row
+      head to column names      % use first row as column names
+    ]{englishwords.csv}{}% file name
+    {\csvcoli  &\csvcolii}
+  \end{tabular}
+  \caption{English words}
+\end{table}
+\newpage
+
+\section{Abbreviations}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{|p{5cm}|p{10cm}|}
+    \hline
+     \textbf{Abbreviation} & \textbf{Name} \\
+    \hline\hline
+    % Load rows from CSV
+    \csvreader[
+      late after line=\\\hline, % add line after each row
+      head to column names      % use first row as column names
+    ]{abbreviation.csv}{}% file name
+    {\csvcoli  &\csvcolii}
+  \end{tabular}
+  \caption{Glossary terms from CSV}
+\end{table}
+
+\end{document}
