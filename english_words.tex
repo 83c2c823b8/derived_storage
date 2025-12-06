@@ -15,15 +15,15 @@
 \section{English words}
 \begin{table}[h]
   \centering
-  \begin{tabular}{|p{5cm}|p{10cm}|}
+	\begin{tabular}{|p{5cm}|p{6cm}|p{5cm}|}
     \hline
-     \textbf{English words} & \textbf{Meaning} \\
+		\textbf{English words} & \textbf{Meaning} &\textbf{Source}\\
     \hline\hline
     \csvreader[
       late after line=\\\hline, % add line after each row
       head to column names      % use first row as column names
     ]{englishwords.csv}{}% file name
-    {\csvcoli  &\csvcolii}
+		{\csvcoli  &\csvcolii &\csvcoliii}
   \end{tabular}
   \caption{English words}
 \end{table}
