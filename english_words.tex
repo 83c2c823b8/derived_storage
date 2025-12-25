@@ -27,23 +27,5 @@
   \end{tabular}
   \caption{English words}
 \end{table}
-\newpage
-
-\section{Abbreviations}
-\begin{table}[h]
-  \centering
-  \begin{tabular}{|p{5cm}|p{10cm}|}
-    \hline
-     \textbf{Abbreviation} & \textbf{Name} \\
-    \hline\hline
-    % Load rows from CSV
-    \csvreader[
-      late after line=\\\hline, % add line after each row
-      head to column names      % use first row as column names
-    ]{abbreviation.csv}{}% file name
-    {\csvcoli  &\csvcolii}
-  \end{tabular}
-  \caption{Glossary terms from CSV}
-\end{table}
 
 \end{document}
