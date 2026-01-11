@@ -3,7 +3,7 @@
 \usepackage{luatexja-fontspec}
 \usepackage[top=10truemm,bottom=10truemm,left=20truemm,right=20truemm]{geometry}
 \usepackage{luatexja} 
-\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,tikz-cd,csvsimple}
+\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,tikz-cd,csvsimple,longtable}
 \usetikzlibrary{arrows.meta}
 \titleformat*{\section}{\Large\bfseries}
 \setlength{\parindent}{0pt}
@@ -13,19 +13,26 @@
 \begin{document}
 
 \section{English words}
-\begin{table}[h]
-  \centering
-	\begin{tabular}{|p{5cm}|p{6cm}|p{5cm}|}
-    \hline
-		\textbf{English words} & \textbf{Meaning} &\textbf{Source}\\
-    \hline\hline
-    \csvreader[
-      late after line=\\\hline, % add line after each row
-      head to column names      % use first row as column names
-    ]{englishwords.csv}{}% file name
-		{\csvcoli  &\csvcolii &\csvcoliii}
-  \end{tabular}
-  \caption{English words}
-\end{table}
+
+\begin{longtable}{|p{5cm}|p{6cm}|p{5cm}|}
+  \caption{English words}\label{tab:englishwords}\\
+  \hline
+  \textbf{English words} & \textbf{Meaning} & \textbf{Source} \\
+  \hline\hline
+  \endfirsthead
+
+  \hline
+  \textbf{English words} & \textbf{Meaning} & \textbf{Source} \\
+  \hline\hline
+  \endhead
+
+  \endfoot
+
+  \csvreader[
+    late after line=\\\hline,
+    head to column names
+  ]{englishwords.csv}{}
+  {\csvcoli & \csvcolii & \csvcoliii}
+\end{longtable}
 
 \end{document}
