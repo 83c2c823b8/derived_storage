@@ -55,9 +55,9 @@
 <table id="table">
   <thead>
     <tr>
-      <th>Column 1</th>
-      <th>Column 2</th>
-      <th>Column 3</th>
+      <th>English</th>
+      <th>Japanese</th>
+      <th>Example</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -88,7 +88,7 @@ fetch("./englishwords.csv")
     }
 
     render(data);
-    statusDiv.textContent = "Displaying" + data.length + "lines ";
+    statusDiv.textContent = "Displaying " + data.length + " lines. ";
   })
   .catch(error => {
     console.error(error);
@@ -128,7 +128,7 @@ searchInput.addEventListener("input", () => {
   );
 
   render(filtered);
-  statusDiv.textContent = "Displaying" + filtered.length + "lines．";
+  statusDiv.textContent = "Displaying " + filtered.length + " lines．";
 });
 </script>
 
