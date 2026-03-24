@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>English Words Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background: #f4f6f8;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    #search {
+      margin-bottom: 15px;
+      padding: 8px;
+      width: 300px;
+      font-size: 14px;
+    }
+    #status {
+      margin: 10px 0 20px 0;
+      color: #444;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #2c3e50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+    tr:hover {
+      background: #eef5ff;
+    }
+  </style>
+</head>
+<body>
+
+<h1>English Words</h1>
+
+<input type="text" id="search" placeholder="検索...">
+<div id="status">読み込み中...</div>
+
+<table id="table">
+  <thead>
+    <tr>
+      <th>Column 1</th>
+      <th>Column 2</th>
+      <th>Column 3</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const tableBody = document.querySelector("#table tbody");
+const searchInput = document.getElementById("search");
+const statusDiv = document.getElementById("status");
+
+let data = [];
+
+fetch("./englishwords.csv")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("HTTP error: " + response.status);
+    }
+    return response.text();
+  })
+  .then(text => {
+    console.log("CSV text:", text);
+
+    data = parseCSV(text);
+
+    if (data.length === 0) {
+      statusDiv.textContent = "CSVは読み込めましたが，中身が空です．";
+      return;
+    }
+
+    render(data);
+    statusDiv.textContent = data.length + " 行を表示しています．";
+  })
+  .catch(error => {
+    console.error(error);
+    statusDiv.textContent =
+      "CSVの読み込みに失敗しました．HTMLを file:// で開いているか，englishwords.csv が同じディレクトリにない可能性があります．";
+  });
+
+function parseCSV(text) {
+  return text
+    .trim()
+    .split(/\r?\n/)
+    .filter(line => line.trim() !== "")
+    .map(line => line.split(","));
+}
+
+function render(rows) {
+  tableBody.innerHTML = "";
+
+  rows.forEach(row => {
+    const tr = document.createElement("tr");
+
+    for (let i = 0; i < 3; i++) {
+      const td = document.createElement("td");
+      td.textContent = row[i] ?? "";
+      tr.appendChild(td);
+    }
+
+    tableBody.appendChild(tr);
+  });
+}
+
+searchInput.addEventListener("input", () => {
+  const keyword = searchInput.value.toLowerCase();
+
+  const filtered = data.filter(row =>
+    row.some(cell => String(cell).toLowerCase().includes(keyword))
+  );
+
+  render(filtered);
+  statusDiv.textContent = filtered.length + " 行を表示しています．";
+});
+</script>
+
+</body>
+</html>
