@@ -3,7 +3,7 @@
 \usepackage{luatexja-fontspec}
 \usepackage[top=10truemm,bottom=10truemm,left=20truemm,right=20truemm]{geometry}
 \usepackage{luatexja} 
-\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,tikz-cd,csvsimple,longtable}
+\usepackage{multicol,amsmath,amssymb,mathtools,ascmac,amsthm,amscd,physics,comment,dcolumn,titlesec,mathrsfs,tikz-cd,csvsimple,tabularx,supertabular}
 \usetikzlibrary{arrows.meta}
 \titleformat*{\section}{\Large\bfseries}
 \setlength{\parindent}{0pt}
@@ -13,27 +13,18 @@
 \newcommand{\comma}{,}
 \begin{document}
 
-\section{English words}
+\tablehead{
+\hline
+\textbf{English words} & \textbf{Meaning} & \textbf{Example} \\
+\hline\hline
+}
 
-\begin{longtable}{|p{4cm}|p{4cm}|p{8cm}|}
-  \caption{English words}\label{tab:englishwords}\\
-  \hline
-  \textbf{English words} & \textbf{Meaning} & \textbf{Example} \\
-  \hline\hline
-  \endfirsthead
-
-  \hline
-	\textbf{English words} & \textbf{Meaning} & \textbf{Example} \\
-  \hline\hline
-  \endhead
-
-  \endfoot
-
-  \csvreader[
-    late after line=\\\hline,
-    head to column names
-  ]{englishwords.csv}{}
-  {\csvcoli & \csvcolii & \csvcoliii}
-\end{longtable}
+\begin{supertabular}{|p{4cm}|p{4cm}|p{8cm}|}
+\csvreader[
+  head to column names,
+  late after line=\\\hline
+]{englishwords.csv}{}
+{\csvcoli & \csvcolii & \csvcoliii}
+\end{supertabular}
 
 \end{document}
